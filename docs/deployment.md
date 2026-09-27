@@ -32,7 +32,9 @@ GitHub → `lee851104/sector_rotation` → Settings → Secrets and variables �
 
 ## 4. 管理者按鈕
 
-在未完成以下設定前，公開儀表板可運作，但管理頁會拒絕更新，不提供免登入後門。這段期間可直接用已登入的GitHub Actions **Run workflow**手動更新。
+管理頁的「在 GitHub 手動更新」入口可直接使用既有GitHub帳號，開啟後選 **Run workflow → update**；GitHub會檢查操作權限。這個方式不需要增加金鑰。
+
+下列設定用於啟用網頁內的「立即更新」按鈕；未設定時此按鈕停用，GitHub入口仍可使用。
 
 ### GitHub 細粒度 Token
 

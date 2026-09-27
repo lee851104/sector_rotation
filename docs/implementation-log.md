@@ -20,3 +20,5 @@ Plan: docs/superpowers/plans/2026-09-28-gics-dashboard.md
 - GitHub僅查核Secret名稱：三項已存在；沒有讀回或輸出金鑰值。
 - 獨立最終review已完成，修正過期快取、延遲基準日鎖定、缺口後輪動暖機、按實際嘗試數保存、首筆請求前保存running、600筆基準驗證、完整歷史跳價驗證及前端行情日期過期提示。新增回歸測試。
 - Ruling: 初次部署自動建立專用Pages專案並保存身分；若既有同名專案缺少可核對記錄則停止，不覆蓋。
+- 遠端CI與四檔真實smoke成功：各600筆、2024-05-06至2026-09-25；workflow run 36336542249。首次deploy在空白data-state的git add失敗，增加本機真實Git整合測試後修正。
+- Ruling: 管理頁增加既有GitHub權限控制的手動入口，無需另建金鑰；Access設定仍保留供站內立即更新使用。
