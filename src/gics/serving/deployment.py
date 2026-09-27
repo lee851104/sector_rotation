@@ -1,6 +1,7 @@
 """Create a dedicated Pages project, without overwriting an unrelated project."""
 
 import os
+import re
 from pathlib import Path
 
 import httpx
@@ -18,7 +19,9 @@ def ensure_project(account, token, state_dir, *, transport=None):
         headers={"Authorization": f"Bearer {token}"}, transport=transport, timeout=45
     ) as client:
         response = client.get(f"{root}/{name}")
+        phase = 'lookup'
         if response.status_code == 404:
+            phase = 'create'
             response = client.post(
                 root, json={"name": name, "production_branch": "main"}
             )
@@ -26,8 +29,13 @@ def ensure_project(account, token, state_dir, *, transport=None):
         else:
             created = False
         if not response.is_success:
+            try:
+                codes = [str(e['code']) for e in response.json().get('errors', [])
+                         if isinstance(e.get('code'), int)]
+            except (ValueError, TypeError, KeyError):
+                codes = []
             raise RuntimeError(
-                f"Cloudflare project request failed (HTTP {response.status_code})"
+                f"Cloudflare project {phase} failed (HTTP {response.status_code}; codes {','.join(codes) or 'none'})"
             )
         payload = response.json()
         if not payload.get("success") or not payload.get("result", {}).get("id"):
@@ -55,9 +63,12 @@ def ensure_project(account, token, state_dir, *, transport=None):
 
 
 if __name__ == "__main__":
+    account = os.environ.get('CLOUDFLARE_ACCOUNT_ID','').strip()
+    if not re.fullmatch(r'[0-9a-fA-F]{32}',account):
+        raise RuntimeError('CLOUDFLARE_ACCOUNT_ID must contain the 32-character Account ID')
     ensure_project(
-        os.environ.get("CLOUDFLARE_ACCOUNT_ID"),
-        os.environ.get("CLOUDFLARE_API_TOKEN"),
+        account,
+        os.environ.get("CLOUDFLARE_API_TOKEN",'').strip(),
         Path("data/state"),
     )
     print("Dedicated Pages project verified")
