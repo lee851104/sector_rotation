@@ -19,19 +19,27 @@ def ensure_project(account, token, state_dir, *, transport=None):
         headers={"Authorization": f"Bearer {token}"}, transport=transport, timeout=45
     ) as client:
         response = client.get(f"{root}/{name}")
-        phase = 'lookup'
+        phase = "lookup"
         if response.status_code == 404:
-            phase = 'create'
+            phase = "create"
             response = client.post(
-                root, json={"name": name, "production_branch": "main"}
+                root,
+                json={
+                    "name": name,
+                    "production_branch": "main",
+                    "deployment_configs": {"production": {}, "preview": {}},
+                },
             )
             created = True
         else:
             created = False
         if not response.is_success:
             try:
-                codes = [str(e['code']) for e in response.json().get('errors', [])
-                         if isinstance(e.get('code'), int)]
+                codes = [
+                    str(e["code"])
+                    for e in response.json().get("errors", [])
+                    if isinstance(e.get("code"), int)
+                ]
             except (ValueError, TypeError, KeyError):
                 codes = []
             raise RuntimeError(
@@ -63,12 +71,14 @@ def ensure_project(account, token, state_dir, *, transport=None):
 
 
 if __name__ == "__main__":
-    account = os.environ.get('CLOUDFLARE_ACCOUNT_ID','').strip()
-    if not re.fullmatch(r'[0-9a-fA-F]{32}',account):
-        raise RuntimeError('CLOUDFLARE_ACCOUNT_ID must contain the 32-character Account ID')
+    account = os.environ.get("CLOUDFLARE_ACCOUNT_ID", "").strip()
+    if not re.fullmatch(r"[0-9a-fA-F]{32}", account):
+        raise RuntimeError(
+            "CLOUDFLARE_ACCOUNT_ID must contain the 32-character Account ID"
+        )
     ensure_project(
         account,
-        os.environ.get("CLOUDFLARE_API_TOKEN",'').strip(),
+        os.environ.get("CLOUDFLARE_API_TOKEN", "").strip(),
         Path("data/state"),
     )
     print("Dedicated Pages project verified")

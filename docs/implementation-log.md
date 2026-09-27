@@ -22,3 +22,5 @@ Plan: docs/superpowers/plans/2026-09-28-gics-dashboard.md
 - Ruling: 初次部署自動建立專用Pages專案並保存身分；若既有同名專案缺少可核對記錄則停止，不覆蓋。
 - 遠端CI與四檔真實smoke成功：各600筆、2024-05-06至2026-09-25；workflow run 36336542249。首次deploy在空白data-state的git add失敗，增加本機真實Git整合測試後修正。
 - Ruling: 管理頁增加既有GitHub權限控制的手動入口，無需另建金鑰；Access設定仍保留供站內立即更新使用。
+- 遠端CI已通過44項Python、17項JS、4項browser測試（commit f1578fa）。完整行情工作36337228471正從21檔檢查點續傳；全量品質/報酬核對仍待完成。
+- 外部部署問題：Cloudflare GET專案查詢回404，POST建立回HTTP500、代碼8000000，三次獨立工作皆失敗。Account ID格式通過，尚不能斷言Token或帳戶功能完全正常。建立request補齊官方Wrangler相同的production/preview配置；遠端結果待驗證，不宣稱修復。
