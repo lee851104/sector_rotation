@@ -1,0 +1,7 @@
+name = "sector-rotation"
+pages_build_output_dir = "dist"
+compatibility_date = "2026-09-28"
+
+[vars]
+GITHUB_REPOSITORY = "lee851104/sector_rotation"
+GITHUB_BRANCH = "main"

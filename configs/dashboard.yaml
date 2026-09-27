@@ -1,0 +1,22 @@
+provider:
+  base_url: https://api.twelvedata.com
+  outputsize: 600
+  interval_seconds: 8.7
+  daily_credits: 800
+  reserve_credits: 20
+  attempts: 3
+universe:
+  url: https://en.wikipedia.org/wiki/List_of_S%26P_500_companies
+  fallback_url: https://raw.githubusercontent.com/datasets/s-and-p-500-companies/main/data/constituents.csv
+  minimum_members: 450
+  maximum_members: 550
+  max_snapshot_age_days: 7
+analytics:
+  benchmark: SPY
+  minimum_benchmark_bars: 600
+  minimum_coverage: 0.98
+  periods: {1M: 21, 3M: 63, 6M: 126, 12M: 252}
+  trails: {1M: 4, 3M: 13, 6M: 26, 12M: 52}
+  rs_weeks: 10
+  momentum_weeks: 4
+  extreme_daily_return: 0.8

@@ -1,0 +1,1 @@
+"""Pure industry-return calculations."""

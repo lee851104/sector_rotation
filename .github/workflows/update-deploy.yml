@@ -1,0 +1,92 @@
+name: Update and deploy GICS
+on:
+  push:
+    branches: [main]
+    paths-ignore: ['docs/**', '**.md']
+  schedule:
+    - cron: '17 18 * * 1-5'
+      timezone: America/New_York
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'smoke 首次連線測試 / update 更新並部署 / deploy 只部署現有資料'
+        required: true
+        type: choice
+        options: [smoke, update, deploy]
+        default: update
+permissions:
+  contents: write
+concurrency:
+  group: gics-production-update
+  cancel-in-progress: false
+jobs:
+  update:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    env:
+      MODE: ${{ github.event_name == 'push' && 'deploy' || inputs.mode || 'update' }}
+      TWELVE_DATA_API_KEY: ${{ secrets.TWELVE_DATA_API_KEY }}
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      GICS_PERSIST_STATE: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: astral-sh/setup-uv@v7
+        with:
+          version: '0.12.13'
+      - run: uv sync --locked
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Check required secrets
+        shell: bash
+        run: |
+          test -n "$CLOUDFLARE_API_TOKEN" || { echo 'Missing CLOUDFLARE_API_TOKEN'; exit 1; }
+          test -n "$CLOUDFLARE_ACCOUNT_ID" || { echo 'Missing CLOUDFLARE_ACCOUNT_ID'; exit 1; }
+          if [ "$MODE" != deploy ]; then
+            test -n "$TWELVE_DATA_API_KEY" || { echo 'Missing TWELVE_DATA_API_KEY'; exit 1; }
+          fi
+      - name: Restore durable data state
+        run: bash scripts/prepare-state.sh
+      - name: Real provider connectivity test
+        if: env.MODE == 'smoke'
+        run: uv run python -m gics.serving.pipeline --smoke
+      - name: Update daily dataset
+        id: update
+        if: env.MODE == 'update'
+        run: uv run python -m gics.serving.pipeline
+      - name: Persist state even after data failures
+        if: always()
+        shell: bash
+        run: |
+          if [ -d data/remote-state/.git ]; then bash scripts/persist-state.sh; fi
+      - name: Verify code before deployment
+        if: success() && env.MODE != 'smoke'
+        run: |
+          uv run pytest -q
+          npm test
+          npm run build
+      - name: Prepare dedicated Cloudflare Pages project
+        if: success() && env.MODE != 'smoke'
+        run: |
+          uv run python -m gics.serving.deployment
+          bash scripts/persist-state.sh
+      - name: Deploy verified site and snapshot
+        if: success() && env.MODE != 'smoke'
+        run: npx wrangler pages deploy dist --project-name sector-rotation --branch main --commit-dirty=true
+      - name: Record successful deployment
+        if: success() && env.MODE != 'smoke'
+        shell: bash
+        run: |
+          uv run python -c "from gics.data.state import read_json,write_json; from pathlib import Path; from datetime import datetime,timezone; d=read_json(Path('data/state/dashboard.json')); write_json(Path('data/state/deployment.json'),{'as_of':d.get('as_of'),'deployed_at':datetime.now(timezone.utc).isoformat()})"
+          bash scripts/persist-state.sh
+      - name: Write human-readable result
+        if: always()
+        shell: bash
+        run: |
+          uv run python -c "from gics.data.state import read_json; from pathlib import Path; import os; s=read_json(Path('data/state/status.json')); d=read_json(Path('data/state/deployment.json')); p=read_json(Path('data/state/smoke.json')); f=open(os.environ['GITHUB_STEP_SUMMARY'],'a'); f.write('## GICS update\n\nMode: '+os.environ['MODE']+'\n\nOutcome: '+str(s.get('state','No update attempted'))+'\n\nMarket date: '+str(s.get('as_of','Unavailable'))+'\n\nSymbols: '+str(s.get('completed',0))+'/'+str(s.get('total',0))+'\n\nProvider smoke verified: '+str(p.get('verified_at','Not yet'))+'\n\nLast successful deployment: '+str(d.get('deployed_at','Not yet'))+'\n')"
