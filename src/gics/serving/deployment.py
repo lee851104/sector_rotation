@@ -2,11 +2,45 @@
 
 import os
 import re
+import json
 from pathlib import Path
 
 import httpx
 
 from gics.data.state import read_json, write_json
+
+
+def safe_diagnostic(response, secrets):
+    """Keep only error diagnostics; never serialize token or project results."""
+    try:
+        errors = response.json().get('errors', [])
+    except (ValueError, AttributeError):
+        errors = []
+    report = json.dumps({'http':response.status_code,
+                         'ray':response.headers.get('cf-ray'),
+                         'errors':[{'code':e.get('code'),
+                                    'message':str(e.get('message',''))[:400]}
+                                   for e in errors if isinstance(e,dict)]})
+    for secret in secrets:
+        if secret:
+            report = report.replace(secret,'[redacted]')
+    return report
+
+
+def diagnose_access(client, account, token, root):
+    base = 'https://api.cloudflare.com/client/v4'
+    probes = [('account-token',f'{base}/accounts/{account}/tokens/verify'),
+              ('user-token',f'{base}/user/tokens/verify'),
+              ('pages-list',root)]
+    for label, url in probes:
+        try:
+            response = client.get(url)
+            print(f'CF_DIAG {label}: {safe_diagnostic(response,(account,token))}')
+            if label == 'pages-list' and response.is_success:
+                projects = response.json().get('result',[])
+                print(f'CF_DIAG pages-list count: {len(projects)}')
+        except (httpx.HTTPError,ValueError,TypeError):
+            print(f'CF_DIAG {label}: response unavailable')
 
 
 def ensure_project(account, token, state_dir, *, transport=None):
@@ -34,6 +68,8 @@ def ensure_project(account, token, state_dir, *, transport=None):
         else:
             created = False
         if not response.is_success:
+            print(f'CF_DIAG {phase}: {safe_diagnostic(response,(account,token))}')
+            diagnose_access(client,account,token,root)
             try:
                 codes = [
                     str(e["code"])

@@ -5,6 +5,17 @@ from gics.serving.deployment import ensure_project
 from gics.data.state import read_json, write_json
 
 
+def test_diagnostics_redact_credentials_and_ignore_result():
+    from gics.serving.deployment import safe_diagnostic
+    response = httpx.Response(500, json={
+        'errors':[{'code':8000000,'message':'Failed for sensitive-key account-value'}],
+        'result':{'token':'do-not-output'},
+    }, headers={'cf-ray':'example-ray'})
+    report = safe_diagnostic(response, ('sensitive-key','account-value'))
+    assert '8000000' in report and 'Failed for' in report
+    assert all(value not in report for value in ('sensitive-key','account-value','do-not-output'))
+
+
 def test_cloudflare_failure_exposes_code_but_not_raw_message(tmp_path):
     transport = httpx.MockTransport(
         lambda _: httpx.Response(
