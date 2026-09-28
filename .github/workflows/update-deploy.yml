@@ -78,7 +78,7 @@ jobs:
           bash scripts/persist-state.sh
       - name: Deploy verified site and snapshot
         if: success() && env.MODE != 'smoke'
-        run: npx wrangler pages deploy dist --project-name sector-rotation --branch main --commit-dirty=true
+        run: npx wrangler pages deploy dist --project-name gics-lee851104 --branch main --commit-dirty=true
       - name: Record successful deployment
         if: success() && env.MODE != 'smoke'
         shell: bash

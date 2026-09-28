@@ -14,7 +14,7 @@ GitHub → `lee851104/sector_rotation` → Settings → Secrets and variables �
 
 ## 2. Pages 專案
 
-第一次部署會自動建立 **Pages / Direct Upload** 專案 `sector-rotation`，並把專案識別記錄在data-state分支。此專案由GitHub Actions用Wrangler上傳，勿另外啟用同一專案Git自動建置。部署分支main。
+第一次部署會自動建立 **Pages / Direct Upload** 專案 `gics-lee851104`，並把專案識別記錄在data-state分支。此專案由GitHub Actions用Wrangler上傳，勿另外啟用同一專案Git自動建置。部署分支main。
 
 若同名專案已存在、但沒有本專案保存的識別記錄，工作會停止，避免覆蓋其他網站；需核對現有專案身分後再處理。免費Pages預設網址不需買網域。
 

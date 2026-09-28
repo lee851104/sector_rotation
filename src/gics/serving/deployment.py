@@ -46,7 +46,7 @@ def diagnose_access(client, account, token, root):
 def ensure_project(account, token, state_dir, *, transport=None):
     if not account or not token:
         raise RuntimeError("Missing Cloudflare configuration")
-    name = "sector-rotation"
+    name = "gics-lee851104"
     root = f"https://api.cloudflare.com/client/v4/accounts/{account}/pages/projects"
     marker = state_dir / "project.json"
     with httpx.Client(

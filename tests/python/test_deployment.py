@@ -41,7 +41,7 @@ def test_create_missing_project_and_record_identity(tmp_path):
                 "success": True,
                 "result": {
                     "id": "ours",
-                    "name": "sector-rotation",
+                    "name": "gics-lee851104",
                     "production_branch": "main",
                 },
             },

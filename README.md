@@ -79,7 +79,7 @@ npm run build
 - `CLOUDFLARE_ACCOUNT_ID`：帳戶 ID。
 - `TWELVE_DATA_API_KEY`：Twelve Data 金鑰。
 
-把程式推到 main 後，工作流程會建立專用的 `sector-rotation` Pages 專案並部署介面，再到 GitHub Actions 手動選 **smoke** 驗證真實資料權限；通過後選 **update**。日後按排程執行。
+把程式推到 main 後，工作流程會建立專用的 `gics-lee851104` Pages 專案並部署介面，再到 GitHub Actions 手動選 **smoke** 驗證真實資料權限；通過後選 **update**。日後按排程執行。
 
 免費資料方案每分鐘/每日有限額，全量約需一至兩小時；同日成功更新會跳過重複下載。**首次連線與收盤歷史是否涵蓋所有股票，要以你帳戶的實際回應為準。**
 
