@@ -24,3 +24,7 @@ Plan: docs/superpowers/plans/2026-09-28-gics-dashboard.md
 - Ruling: 管理頁增加既有GitHub權限控制的手動入口，無需另建金鑰；Access設定仍保留供站內立即更新使用。
 - 遠端CI已通過44項Python、17項JS、4項browser測試（commit f1578fa）。完整行情工作36337228471正從21檔檢查點續傳；全量品質/報酬核對仍待完成。
 - 外部部署問題：Cloudflare GET專案查詢回404，POST建立回HTTP500、代碼8000000，三次獨立工作皆失敗。Account ID格式通過，尚不能斷言Token或帳戶功能完全正常。建立request補齊官方Wrangler相同的production/preview配置；遠端結果待驗證，不宣稱修復。
+
+- 2026-09-28 最終部署成功：36377543542，公開網址 https://gics-lee851104.pages.dev/ 。帳戶Token驗證200、Pages清單200且0個專案；舊名稱有DNS，新名稱無DNS。只將sector-rotation改為gics-lee851104即成功建立並部署，支持全域名稱衝突判斷。參照Cloudflare workers-sdk issue3527。
+- 真實快照：2026-09-25，503成分股+SPY共504條下載成功，502成分股通過品質閘門（99.8%），L1–L4映射100%。MRNA的2026-08-18至08-19價格由62.96跳至174.38，超過80%門檻，保守排除而非斷言來源錯誤。
+- 獨立以原始日線核對AAPL/MSFT/BRK.B的21日及252日報酬，與JSON吻合；瀏覽器公開頁載入行情日期、502/503覆蓋、圖表與排名。管理頁GitHub入口正確；站內API在未設定Access時拒絕，未新增任何觸發後門。

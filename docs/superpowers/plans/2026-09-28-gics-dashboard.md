@@ -1,6 +1,6 @@
 # GICS Dashboard Implementation Plan
 
-> 2026-09-28 執行狀態：Tasks 1–6 已實作並通過遠端 CI；Task 7 的真實四檔連線已成功，全量下載及公開部署仍待驗收。實際變更、測試及與原計畫的差異以 `docs/implementation-log.md` 為準；以下保留原始細項供逐項核對，不把未驗證的外部結果標成完成。
+> 2026-09-28 執行狀態：公開版本已上線 https://gics-lee851104.pages.dev/ ，全量下載、三檔報酬及瀏覽器真實行情驗收完成。手動更新採GitHub授權入口；原計畫的Access站內單擊更新保留為未啟用選項。實際變更、測試及與原計畫的差異以 `docs/implementation-log.md` 為準。以下保留原始細項供核對。
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 

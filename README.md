@@ -2,7 +2,7 @@
 
 以 S&P 500 成分股的真實日線，觀察產業相對 SPY 的強弱、動能、廣度與個股報酬。
 
-**上線狀態（2026-09-28）：程式與遠端 CI 已通過；真實 API 連線已確認，全量資料正在更新。** Cloudflare 建立 Pages 專案時回傳 HTTP 500 / 8000000，尚未完成公開部署。最新狀態請看 [GitHub Actions](https://github.com/lee851104/sector_rotation/actions)。正式網站不提供虛構行情。
+**公開網站：[GICS儀表板](https://gics-lee851104.pages.dev/)**。2026-09-28 已成功部署並以瀏覽器驗證真實行情、圖表及管理入口。[部署紀錄](https://github.com/lee851104/sector_rotation/actions/runs/36377543542)。
 
 | 項目 | 首版行為 |
 |---|---|
@@ -11,7 +11,7 @@
 | 比較基準 | SPY（S&P 500 代理），不是官方指數序列 |
 | 更新 | 美東週一至週五18:17；管理者手動觸發 |
 | 資料失敗 | 保留前次成功結果，不以0或模擬數字填補 |
-| 真實行情驗收 | SPY、AAPL、MSFT、BRK.B 各600筆成功；首次全量驗證待完成 |
+| 真實行情驗收 | 504條行情下載成功；502/503成分股有效（99.8%），MRNA因極端跳價排除 |
 
 ```mermaid
 flowchart LR
@@ -73,7 +73,9 @@ npm run build
 
 ## GitHub 與 Cloudflare
 
-完整步驟見 [部署說明](docs/deployment.md)。GitHub 儲存庫須有：
+手動更新：網站右上角「管理者」→「在 GitHub 手動更新」→ **Run workflow → update**。GitHub 會確認你具有儲存庫操作權限，不必另設登入信箱。
+
+完整部署步驟見 [部署說明](docs/deployment.md)。GitHub 儲存庫須有：
 
 - `CLOUDFLARE_API_TOKEN`：Pages Write。
 - `CLOUDFLARE_ACCOUNT_ID`：帳戶 ID。

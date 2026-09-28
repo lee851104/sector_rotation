@@ -36,6 +36,6 @@ test('mobile layout does not overflow the viewport',async({page})=>{
 });
 test('admin fails closed when configuration is missing',async({page})=>{
  await page.route('**/api/admin/status',r=>r.fulfill({status:503,json:{error:'管理者登入尚未設定'}}));await page.goto('/admin/');
- await expect(page.getByRole('button',{name:'立即更新'})).toBeDisabled();await expect(page.getByRole('status')).toContainText('尚未設定');
+ await expect(page.locator('#refresh')).toBeHidden();await expect(page.getByRole('status')).toContainText('GitHub');
  await expect(page.getByRole('link',{name:'在 GitHub 手動更新 ↗'})).toHaveAttribute('href','https://github.com/lee851104/sector_rotation/actions/workflows/update-deploy.yml');
 });

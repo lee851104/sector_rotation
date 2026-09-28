@@ -34,7 +34,7 @@ GitHub → `lee851104/sector_rotation` → Settings → Secrets and variables �
 
 管理頁的「在 GitHub 手動更新」入口可直接使用既有GitHub帳號，開啟後選 **Run workflow → update**；GitHub會檢查操作權限。這個方式不需要增加金鑰。
 
-下列設定用於啟用網頁內的「立即更新」按鈕；未設定時此按鈕停用，GitHub入口仍可使用。
+下列設定用於啟用網頁內的「立即更新」按鈕；未設定時此按鈕隱藏，GitHub入口仍可使用。
 
 ### GitHub 細粒度 Token
 
@@ -77,6 +77,6 @@ Access應用使用email一次性登入碼或既有身份供應商，Allow政策�
 - **Latest-day coverage**：查看data-state的status/batch，待來源資料補齊後重試失敗股票，不能以假值填入。
 - **Cloudflare project request failed**：確認Account ID、Pages Write權限；已存在但不認識的專案不會被自動覆蓋。
 - **GitHub拒絕操作**：確認細粒度Token的儲存庫及Actions/Contents權限，workflow需存在於main。
-- **管理者登入尚未設定**：Access變數缺漏；此狀態按鈕停用是預期行為。
+- **管理者登入尚未設定**：Access變數缺漏；網站會顯示GitHub更新入口，站內API保持拒絕操作。
 
 本文件不表示資料已取得公開展示授權，亦不表示部署或真實行情已驗收。
